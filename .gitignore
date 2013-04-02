@@ -1,0 +1,7 @@
+# Compiler speak.
+libvideo.a
+*.o
+
+# Swap files.
+*.swp
+
