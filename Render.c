@@ -99,7 +99,7 @@ RenderFrame16(struct VIFController *controller) {
   glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA,
     controller->renderArea.width,
     controller->renderArea.height,
-    0, GL_RGBA, GL_UNSIGNED_SHORT_1_5_5_5_REV, buffer);
+    0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, buffer);
 
   glBegin(GL_QUADS);
     glTexCoord2i(0, 0);

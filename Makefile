@@ -35,7 +35,7 @@ MKDIR = /bin/mkdir -p
 AR = ar
 DOXYGEN = doxygen
 
-VIDEO_FLAGS =
+VIDEO_FLAGS = -DLITTLE_ENDIAN
 WARNINGS = -Wall -Wextra -pedantic -Wunsafe-loop-optimizations
 
 COMMON_CFLAGS = $(WARNINGS) $(VIDEO_FLAGS) -std=c99 -march=native -I.

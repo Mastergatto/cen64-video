@@ -93,6 +93,11 @@ CreateVIF(void) {
   glGenTextures(1, &controller->frameTexture);
   glBindTexture(GL_TEXTURE_RECTANGLE, controller->frameTexture);
 
+  /* Tell OpenGL that the byte order is swapped. */
+#ifdef LITTLE_ENDIAN
+  glPixelStorei(GL_UNPACK_SWAP_BYTES, GL_TRUE);
+#endif
+
   InitVIF(controller);
   return controller;
 }
