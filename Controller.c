@@ -121,6 +121,7 @@ static void
 InitVIF(struct VIFController *controller) {
   debug("Initializing VIF.");
   memset(controller, 0, sizeof(*controller));
+  controller->startTime = glfwGetTime();
 }
 
 /* ============================================================================
@@ -129,6 +130,14 @@ InitVIF(struct VIFController *controller) {
 void
 CycleVIF(struct VIFController *controller) {
   if (unlikely(controller->cyclesUntilIntr == 0)) {
+    char buffer[4096];
+    double vis;
+
+    vis = (double) 1 / (glfwGetTime() - controller->startTime);
+    sprintf(buffer, "CEN64 [%.2f VI/s]", vis);
+    glfwSetWindowTitle(buffer);
+
+    controller->startTime = glfwGetTime();
     RenderFrame(controller);
 
     /* Raise an interrupt. */

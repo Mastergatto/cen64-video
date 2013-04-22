@@ -32,6 +32,8 @@ struct VIFController {
   struct BusController *bus;
 
   unsigned long long cyclesUntilIntr;
+  double startTime;
+
   uint32_t regs[NUM_VI_REGISTERS];
   struct RenderArea renderArea;
   GLuint frameTexture;
