@@ -133,11 +133,15 @@ CycleVIF(struct VIFController *controller) {
     char buffer[4096];
     double vis;
 
-    vis = (double) 1 / (glfwGetTime() - controller->startTime);
-    sprintf(buffer, "CEN64 [%.2f VI/s]", vis);
-    glfwSetWindowTitle(buffer);
+    if (controller->frameCount++ == 10) {
+      vis = (double) 10 / (glfwGetTime() - controller->startTime);
+      sprintf(buffer, "CEN64 [%.2f VI/s]", vis);
+      glfwSetWindowTitle(buffer);
 
-    controller->startTime = glfwGetTime();
+      controller->startTime = glfwGetTime();
+      controller->frameCount = 0;
+    }
+
     RenderFrame(controller);
 
     /* Raise an interrupt. */

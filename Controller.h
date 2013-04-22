@@ -33,6 +33,7 @@ struct VIFController {
 
   unsigned long long cyclesUntilIntr;
   double startTime;
+  unsigned frameCount;
 
   uint32_t regs[NUM_VI_REGISTERS];
   struct RenderArea renderArea;
