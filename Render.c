@@ -77,11 +77,11 @@ RenderFrame16(struct VIFController *controller) {
   unsigned hres = (hdiff * hcoeff);
   unsigned vres = (vdiff * vcoeff);
 
-  unsigned hskip = controller->regs[VI_WIDTH_REG] - hres;
+  int hskip = controller->regs[VI_WIDTH_REG] - hres;
 
   debugarg("H Res:   [%u].", hres);
   debugarg("V Res:   [%u].", vres);
-  debugarg("H Skip:  [%u].", hskip);
+  debugarg("H Skip:  [%d].", hskip);
 
   if (vdiff <= 0 || hdiff <= 0 || !offset)
     return;
