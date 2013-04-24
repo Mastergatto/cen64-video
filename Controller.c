@@ -145,7 +145,7 @@ CycleVIF(struct VIFController *controller) {
     RenderFrame(controller);
 
     /* Raise an interrupt. */
-    BusRaiseRCPInterrupt(controller->bus, MI_INTR_VI | 0x2 /* HACK */);
+    BusRaiseRCPInterrupt(controller->bus, MI_INTR_VI);
     controller->cyclesUntilIntr = (62500000 / 60) + 1;
   }
 
