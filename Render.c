@@ -97,17 +97,17 @@ RenderFrame16(struct VIFController *controller) {
   }
 
   glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA,
-    controller->renderArea.width,
+    controller->renderArea.width + hskip,
     controller->renderArea.height,
     0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, buffer);
 
   glBegin(GL_QUADS);
     glTexCoord2i(0, 0);
     glVertex2i(0, 0);
-    glTexCoord2i(controller->renderArea.width, 0);
-    glVertex2i(controller->renderArea.width, 0);
-    glTexCoord2i(controller->renderArea.width, controller->renderArea.height);
-    glVertex2i(controller->renderArea.width, controller->renderArea.height);
+    glTexCoord2i(controller->renderArea.width - hskip, 0);
+    glVertex2i(controller->renderArea.width - hskip, 0);
+    glTexCoord2i(controller->renderArea.width - hskip, controller->renderArea.height);
+    glVertex2i(controller->renderArea.width - hskip, controller->renderArea.height);
     glTexCoord2i(0, controller->renderArea.height);
     glVertex2i(0, controller->renderArea.height);
   glEnd();
