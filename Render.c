@@ -22,6 +22,8 @@
 
 #include <GL/glfw.h>
 
+#define GL_UNSIGNED_SHORT_5_5_5_1         0x8034
+
 static void RenderFrame16(struct VIFController *controller);
 
 /* ============================================================================
@@ -96,19 +98,19 @@ RenderFrame16(struct VIFController *controller) {
     vres = 480;
   }
 
-  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA,
+  glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
     controller->renderArea.width + hskip,
     controller->renderArea.height,
     0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, buffer);
 
   glBegin(GL_QUADS);
-    glTexCoord2i(0, 0);
+    glTexCoord2f(0, 0);
     glVertex2i(0, 0);
-    glTexCoord2i(controller->renderArea.width - hskip, 0);
+    glTexCoord2f((controller->renderArea.width - hskip) / controller->renderArea.width, 0);
     glVertex2i(controller->renderArea.width - hskip, 0);
-    glTexCoord2i(controller->renderArea.width - hskip, controller->renderArea.height);
+    glTexCoord2f((controller->renderArea.width - hskip) / controller->renderArea.width, 1);
     glVertex2i(controller->renderArea.width - hskip, controller->renderArea.height);
-    glTexCoord2i(0, controller->renderArea.height);
+    glTexCoord2f(0, 1);
     glVertex2i(0, controller->renderArea.height);
   glEnd();
 }
