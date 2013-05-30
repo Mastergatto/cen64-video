@@ -22,6 +22,7 @@
 
 #include <GL/glfw.h>
 
+/* Hack to get access to this */
 #define GL_UNSIGNED_SHORT_5_5_5_1         0x8034
 
 static void RenderFrame16(struct VIFController *controller);
