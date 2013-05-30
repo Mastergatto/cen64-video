@@ -107,13 +107,13 @@ RenderFrame16(struct VIFController *controller) {
     0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, buffer);
 
   glBegin(GL_QUADS);
-    glTexCoord2f(0, 0);
+    glTexCoord2f((float) -hskip / controller->renderArea.width, 0);
     glVertex2i(0, 0);
-    glTexCoord2f((controller->renderArea.width - hskip) / controller->renderArea.width, 0);
-    glVertex2i(controller->renderArea.width - hskip, 0);
-    glTexCoord2f((controller->renderArea.width - hskip) / controller->renderArea.width, 1);
-    glVertex2i(controller->renderArea.width - hskip, controller->renderArea.height);
-    glTexCoord2f(0, 1);
+    glTexCoord2f((controller->renderArea.width) / controller->renderArea.width, 0);
+    glVertex2i(controller->renderArea.width, 0);
+    glTexCoord2f((controller->renderArea.width) / controller->renderArea.width, 1);
+    glVertex2i(controller->renderArea.width, controller->renderArea.height);
+    glTexCoord2f((float) -hskip / controller->renderArea.width, 1);
     glVertex2i(0, controller->renderArea.height);
   glEnd();
 }
