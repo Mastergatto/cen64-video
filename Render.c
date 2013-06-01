@@ -28,6 +28,7 @@
 #endif
 
 static void RenderFrame16(struct VIFController *controller);
+static void RenderFrame32(struct VIFController *controller);
 
 /* ============================================================================
  *  RenderFrame: Draws a frame to the display.
@@ -59,7 +60,7 @@ RenderFrame(struct VIFController *controller) {
     break;
 
   case 3:
-    assert(0 && "32-bit frame.");
+    RenderFrame32(controller);
     break;
   }
 
@@ -114,6 +115,57 @@ RenderFrame16(struct VIFController *controller) {
     glTexCoord2f((controller->renderArea.width) / controller->renderArea.width, 1);
     glVertex2i(controller->renderArea.width, controller->renderArea.height);
     glTexCoord2f((float) -hskip / controller->renderArea.width, 1);
+    glVertex2i(0, controller->renderArea.height);
+  glEnd();
+}
+
+/* ============================================================================
+ *  Renders a 32-bit frame.
+ * ========================================================================= */
+static void
+RenderFrame32(struct VIFController *controller) {
+  uint32_t offset = controller->regs[VI_ORIGIN_REG] & 0xFFFFFF;
+  const uint8_t *buffer = BusGetRDRAMPointer(controller->bus) + offset;
+
+  int hdiff = controller->renderArea.x.end - controller->renderArea.x.start;
+  int vdiff = controller->renderArea.y.end - controller->renderArea.y.start;
+  float hcoeff = (float)(controller->regs[VI_X_SCALE_REG] & 0xFFF) / (1 << 10);
+  float vcoeff = (float)(controller->regs[VI_Y_SCALE_REG] & 0xFFF) / (1 << 10);
+  unsigned hres = (hdiff * hcoeff);
+  unsigned vres = (vdiff * vcoeff);
+
+  int hskip = controller->regs[VI_WIDTH_REG] - hres;
+
+  debugarg("H Res:   [%u].", hres);
+  debugarg("V Res:   [%u].", vres);
+  debugarg("H Skip:  [%d].", hskip);
+
+  if (vdiff <= 0 || hdiff <= 0 || !offset)
+    return;
+
+  /* Hacky? */
+  if (hres > 640) {
+    hskip += (hres - 640);
+    hres = 640;
+  }
+
+  if (vres > 480) {
+    vres = 480;
+  }
+
+  glTexImage2D(GL_TEXTURE_RECTANGLE, 0, GL_RGBA,
+    controller->renderArea.width + hskip,
+    controller->renderArea.height,
+    0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
+
+  glBegin(GL_QUADS);
+    glTexCoord2i(0, 0);
+    glVertex2i(0, 0);
+    glTexCoord2i(controller->renderArea.width - hskip, 0);
+    glVertex2i(controller->renderArea.width - hskip, 0);
+    glTexCoord2i(controller->renderArea.width - hskip, controller->renderArea.height);
+    glVertex2i(controller->renderArea.width - hskip, controller->renderArea.height);
+    glTexCoord2i(0, controller->renderArea.height);
     glVertex2i(0, controller->renderArea.height);
   glEnd();
 }
