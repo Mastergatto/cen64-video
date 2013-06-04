@@ -31,6 +31,20 @@
 
 static void InitVIF(struct VIFController *);
 
+static const float VIUV[] = {
+  0, 0,
+  1, 0,
+  1, 1,
+  0, 1
+};
+
+static const float VIQuad[] = {
+  -1,  1,
+   1,  1,
+   1, -1,
+  -1, -1
+};
+
 /* ============================================================================
  *  Mnemonics table.
  * ========================================================================= */
@@ -73,9 +87,6 @@ CreateVIF(void) {
   glfwSetWindowTitle("CEN64");
   glfwPollEvents();
 
-  /* Load the viewport. */
-  glViewport(0, 0, 640, 480);
-
   /* Disable everything. */
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
@@ -90,8 +101,6 @@ CreateVIF(void) {
 
   /* Generate frame texture. */
   glEnable(GL_TEXTURE_2D);
-  glGenTextures(1, &controller->frameTexture);
-  glBindTexture(GL_TEXTURE_2D, controller->frameTexture);
 
   /* Init texture */
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
@@ -99,6 +108,13 @@ CreateVIF(void) {
 
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
   glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+
+  /* Init OpenGL arrays */
+  glEnableClientState(GL_VERTEX_ARRAY);
+  glEnableClientState(GL_TEXTURE_COORD_ARRAY);
+
+  glTexCoordPointer(2, GL_FLOAT, 0, VIUV);
+  glVertexPointer(2, GL_FLOAT, 0, VIQuad);
 
   /* Tell OpenGL that the byte order is swapped. */
 #ifdef LITTLE_ENDIAN
@@ -114,8 +130,6 @@ CreateVIF(void) {
  * ========================================================================= */
 void
 DestroyVIF(struct VIFController *controller) {
-  glDeleteTextures(1, &controller->frameTexture);
-
   glfwCloseWindow();
   glfwTerminate();
   free(controller);
@@ -165,8 +179,8 @@ CycleVIF(struct VIFController *controller) {
  * ========================================================================= */
 int
 VIRegRead(void *_controller, uint32_t address, void *_data) {
-	struct VIFController *controller = (struct VIFController*) _controller;
-	uint32_t *data = (uint32_t*) _data;
+   struct VIFController *controller = (struct VIFController*) _controller;
+   uint32_t *data = (uint32_t*) _data;
 
   address -= VI_REGS_BASE_ADDRESS;
   enum VIRegister reg = (enum VIRegister) (address / 4);
@@ -182,8 +196,8 @@ VIRegRead(void *_controller, uint32_t address, void *_data) {
  * ========================================================================= */
 int
 VIRegWrite(void *_controller, uint32_t address, void *_data) {
-	struct VIFController *controller = (struct VIFController*) _controller;
-	uint32_t *data = (uint32_t*) _data;
+   struct VIFController *controller = (struct VIFController*) _controller;
+   uint32_t *data = (uint32_t*) _data;
 
   address -= VI_REGS_BASE_ADDRESS;
   enum VIRegister reg = (enum VIRegister) (address / 4);
