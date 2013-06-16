@@ -31,20 +31,6 @@
 
 static void InitVIF(struct VIFController *);
 
-static const float VIUV[] = {
-  0, 0,
-  1, 0,
-  1, 1,
-  0, 1
-};
-
-static const float VIQuad[] = {
-  -1,  1,
-   1,  1,
-   1, -1,
-  -1, -1
-};
-
 /* ============================================================================
  *  Mnemonics table.
  * ========================================================================= */
@@ -113,8 +99,8 @@ CreateVIF(void) {
   glEnableClientState(GL_VERTEX_ARRAY);
   glEnableClientState(GL_TEXTURE_COORD_ARRAY);
 
-  glTexCoordPointer(2, GL_FLOAT, 0, VIUV);
-  glVertexPointer(2, GL_FLOAT, 0, VIQuad);
+  glTexCoordPointer(2, GL_FLOAT, 0, controller->viuv);
+  glVertexPointer(2, GL_FLOAT, 0, controller->quad);
 
   /* Tell OpenGL that the byte order is swapped. */
 #ifdef LITTLE_ENDIAN
@@ -122,6 +108,15 @@ CreateVIF(void) {
 #endif
 
   InitVIF(controller);
+
+  /* Set the initial viuw, quad coordinates. */
+  controller->quad[0] = controller->quad[5] =
+  controller->quad[6] = controller->quad[7] = -1;
+  controller->quad[1] = controller->quad[2] =
+  controller->quad[3] = controller->quad[4] = 1;
+  controller->viuv[2] = controller->viuv[4] =
+  controller->viuv[5] = controller->viuv[7] = 1;
+
   return controller;
 }
 

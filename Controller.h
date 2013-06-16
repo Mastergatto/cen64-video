@@ -38,6 +38,9 @@ struct VIFController {
   uint32_t regs[NUM_VI_REGISTERS];
   struct RenderArea renderArea;
   GLuint frameTexture;
+
+  float viuv[8];
+  float quad[8];
 };
 
 struct VIFController *CreateVIF(void);
