@@ -146,14 +146,13 @@ InitVIF(struct VIFController *controller) {
 void
 CycleVIF(struct VIFController *controller) {
   if (unlikely(controller->cyclesUntilIntr == 0)) {
-    char buffer[4096];
     double vis, hz;
 
     if (++(controller->frameCount) == 10) {
       vis = (double) 10 / (glfwGetTime() - controller->startTime);
       hz = ((double) 6250000 / 60) / (glfwGetTime() - controller->startTime);
-      sprintf(buffer, "CEN64 [%.2f VI/s] [RCP: %.2f MHz]", vis, hz / 10000);
-      glfwSetWindowTitle(buffer);
+      printf("%.2f VI/s, RCP: %.2f MHZ, VR4300: %.2f MHz\n", vis, hz / 10000,
+        hz / 10000 * 1.5);
 
       controller->startTime = glfwGetTime();
       controller->frameCount = 0;
