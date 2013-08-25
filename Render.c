@@ -74,7 +74,7 @@ RenderFrame(struct VIFController *controller) {
     break;
 
   case 1:
-    assert(0 && "Attempted to use reversed frame type.");
+    assert(0 && "Attempted to use reserved frame type.");
     break;
 
   case 2: /* Renders a 16-bit frame. */
