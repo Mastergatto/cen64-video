@@ -96,7 +96,6 @@ RenderFrame(struct VIFController *controller) {
   controller->viuv[6] = (float) -hskip / hres;
 
   glDrawArrays(GL_QUADS, 0, 4);
-  glfwPollEvents();
   glfwSwapBuffers();
 }
 
