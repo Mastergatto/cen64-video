@@ -158,6 +158,7 @@ CycleVIF(struct VIFController *controller) {
       controller->frameCount = 0;
     }
 
+    ResetPerspective(controller);
     RenderFrame(controller);
 
     /* Raise an interrupt. */
@@ -216,7 +217,6 @@ VIRegWrite(void *_controller, uint32_t address, void *_data) {
   case VI_Y_SCALE_REG:
   case VI_WIDTH_REG:
     controller->regs[reg] = *data;
-    ResetPerspective(controller);
     break;
 
   case VI_CURRENT_REG:
