@@ -180,18 +180,17 @@ VIRegRead(void *_controller, uint32_t address, void *_data) {
   address -= VI_REGS_BASE_ADDRESS;
   enum VIRegister reg = (enum VIRegister) (address / 4);
 
-#if 0
-  /* TODO: Fix this; isn't not correct. */
-  /* Causes gittery screens in some ROMs. */
+  /* TODO: This might very well be a giant hack. */
   if (controller->regs[VI_V_SYNC_REG] > 0) {
     controller->regs[VI_CURRENT_REG] =
       (((62500000 / 60) + 1) - (controller->cyclesUntilIntr)) /
       (((62500000 / 60) + 1) / controller->regs[VI_V_SYNC_REG]);
+
+    controller->regs[VI_CURRENT_REG] &= ~0x1;
   }
 
   else
     controller->regs[VI_CURRENT_REG] = 0;
-#endif
 
   debugarg("VIRegRead: Reading from register [%s].", VIRegisterMnemonics[reg]);
   *data = controller->regs[reg];
@@ -213,14 +212,6 @@ VIRegWrite(void *_controller, uint32_t address, void *_data) {
   debugarg("VIRegWrite: Writing to register [%s].", VIRegisterMnemonics[reg]);
 
   switch(reg) {
-  case VI_H_START_REG:
-  case VI_V_START_REG:
-  case VI_X_SCALE_REG:
-  case VI_Y_SCALE_REG:
-  case VI_WIDTH_REG:
-    controller->regs[reg] = *data;
-    break;
-
   case VI_CURRENT_REG:
     BusClearRCPInterrupt(controller->bus, MI_INTR_VI);
     break;
