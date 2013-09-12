@@ -180,6 +180,7 @@ VIRegRead(void *_controller, uint32_t address, void *_data) {
   address -= VI_REGS_BASE_ADDRESS;
   enum VIRegister reg = (enum VIRegister) (address / 4);
 
+#if 0
   /* TODO: Fix this; isn't not correct. */
   /* Causes gittery screens in some ROMs. */
   if (controller->regs[VI_V_SYNC_REG] > 0) {
@@ -190,6 +191,7 @@ VIRegRead(void *_controller, uint32_t address, void *_data) {
 
   else
     controller->regs[VI_CURRENT_REG] = 0;
+#endif
 
   debugarg("VIRegRead: Reading from register [%s].", VIRegisterMnemonics[reg]);
   *data = controller->regs[reg];
