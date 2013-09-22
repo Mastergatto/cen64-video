@@ -57,22 +57,6 @@ struct VIFController *
 CreateVIF(void) {
   struct VIFController *controller;
 
-  if (glfwInit() != GL_TRUE) {
-    debug("Failed to initialize GLFW.");
-    return NULL;
-  }
-
-  glfwOpenWindowHint(GLFW_WINDOW_NO_RESIZE, GL_TRUE);
-  if (glfwOpenWindow(640, 480, 5, 6, 5, 0, 8, 0, GLFW_WINDOW) != GL_TRUE) {
-    debug("Failed to open a GLFW window.");
-
-    glfwTerminate();
-    return NULL;
-  }
-
-  glfwSetWindowTitle("CEN64");
-  glfwPollEvents();
-
   /* Disable everything. */
   glDisable(GL_DEPTH_TEST);
   glDisable(GL_LIGHTING);
