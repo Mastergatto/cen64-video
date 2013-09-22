@@ -57,17 +57,17 @@ struct VIFController *
 CreateVIF(void) {
   struct VIFController *controller;
 
-  /* Disable everything. */
-  glDisable(GL_DEPTH_TEST);
-  glDisable(GL_LIGHTING);
-  glDisable(GL_BLEND);
-  glDisable(GL_DITHER);
-
   /* Allocate memory for controller. */
   if ((controller = (struct VIFController*) malloc(
     sizeof(struct VIFController))) == NULL) {
     return NULL;
   }
+
+  /* Disable everything. */
+  glDisable(GL_DEPTH_TEST);
+  glDisable(GL_LIGHTING);
+  glDisable(GL_BLEND);
+  glDisable(GL_DITHER);
 
   /* Generate frame texture. */
   glEnable(GL_TEXTURE_2D);
@@ -109,8 +109,6 @@ CreateVIF(void) {
  * ========================================================================= */
 void
 DestroyVIF(struct VIFController *controller) {
-  glfwCloseWindow();
-  glfwTerminate();
   free(controller);
 }
 
