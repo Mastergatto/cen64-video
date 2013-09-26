@@ -13,7 +13,12 @@
 #include "Address.h"
 #include "Common.h"
 #include "Render.h"
+
+#ifdef GLFW3
+#include <GLFW/glfw3.h>
+#else
 #include <GL/glfw.h>
+#endif
 
 enum VIRegister {
 #define X(reg) reg,
@@ -30,6 +35,10 @@ struct BusController;
 
 struct VIFController {
   struct BusController *bus;
+
+#ifdef GLFW3
+  GLFWwindow *window;
+#endif
 
   unsigned long long cyclesUntilIntr;
   double startTime;

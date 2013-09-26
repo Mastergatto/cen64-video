@@ -27,7 +27,11 @@
 #include <string.h>
 #endif
 
+#ifdef GLFW3
+#include <GLFW/glfw3.h>
+#else
 #include <GL/glfw.h>
+#endif
 
 static void InitVIF(struct VIFController *);
 
@@ -205,4 +209,14 @@ VIRegWrite(void *_controller, uint32_t address, void *_data) {
 
   return 0;
 }
+
+#ifdef GLFW3
+/* ============================================================================
+ *  SetVIFContext: Set the GLFW3 window context
+ * ========================================================================= */
+void
+SetVIFContext(struct VIFController *controller, GLFWwindow *window) {
+  controller->window = window;
+}
+#endif
 

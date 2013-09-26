@@ -20,7 +20,11 @@
 #include <string.h>
 #endif
 
+#ifdef GLFW3
+#include <GLFW/glfw3.h>
+#else
 #include <GL/glfw.h>
+#endif
 
 /* Hack to get access to this */
 #ifdef _WIN32 /* #ifdef OPENGL_WUT */
@@ -96,7 +100,13 @@ RenderFrame(struct VIFController *controller) {
   controller->viuv[6] = (float) -hskip / hres;
 
   glDrawArrays(GL_QUADS, 0, 4);
+
+#ifdef GLFW3
+  glfwPollEvents();
+  glfwSwapBuffers(controller->window);
+#else
   glfwSwapBuffers();
+#endif
 }
 
 /* ============================================================================
