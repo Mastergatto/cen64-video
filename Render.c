@@ -47,20 +47,15 @@ RenderFrame(struct VIFController *controller) {
   uint32_t offset = controller->regs[VI_ORIGIN_REG] & 0xFFFFFF;
   const uint8_t *buffer = BusGetRDRAMPointer(controller->bus) + offset;
 
-  int hdiff = controller->renderArea.x.end - controller->renderArea.x.start;
-  int vdiff = controller->renderArea.y.end - controller->renderArea.y.start;
-  float hcoeff = (float)(controller->regs[VI_X_SCALE_REG] & 0xFFF) / (1 << 10);
-  float vcoeff = (float)(controller->regs[VI_Y_SCALE_REG] & 0xFFF) / (1 << 10);
-  unsigned hres = (hdiff * hcoeff);
-  unsigned vres = (vdiff * vcoeff);
-
-  int hskip = controller->regs[VI_WIDTH_REG] - hres;
+  int hskip = controller->renderArea.hskip;
+  int vres = controller->renderArea.height;
+  int hres = controller->renderArea.width;
 
   debugarg("H Res:   [%u].", hres);
   debugarg("V Res:   [%u].", vres);
   debugarg("H Skip:  [%d].", hskip);
 
-  if (vdiff <= 0 || hdiff <= 0 || !offset)
+  if (hres <= 0 || vres <= 0)
     return;
 
   /* Hacky? */
@@ -82,22 +77,18 @@ RenderFrame(struct VIFController *controller) {
     break;
 
   case 2: /* Renders a 16-bit frame. */
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-      controller->renderArea.width + hskip,
-      controller->renderArea.height,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, hres + hskip, vres,
       0, GL_RGBA, GL_UNSIGNED_SHORT_5_5_5_1, buffer);
     break;
 
   case 3: /* Renders a 32-bit frame. */
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
-      controller->renderArea.width + hskip,
-      controller->renderArea.height,
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, hres + hskip, vres,
       0, GL_RGBA, GL_UNSIGNED_BYTE, buffer);
     break;
   }
 
-  controller->viuv[0] = (float) -hskip / hres;
-  controller->viuv[6] = (float) -hskip / hres;
+  controller->viuv[2] = controller->viuv[4] =
+    (float) hres / (hres + hskip);
 
   glDrawArrays(GL_QUADS, 0, 4);
 
@@ -115,6 +106,7 @@ RenderFrame(struct VIFController *controller) {
 void
 ResetPerspective(struct VIFController *controller) {
   struct RenderArea *renderArea = &controller->renderArea;
+  float hcoeff, vcoeff;
 
   /* Calculate the bounding positions. */
   renderArea->x.start = controller->regs[VI_H_START_REG] >> 16 & 0x3FF;
@@ -122,18 +114,12 @@ ResetPerspective(struct VIFController *controller) {
   renderArea->y.start = controller->regs[VI_V_START_REG] >> 16 & 0x3FF;
   renderArea->y.end = controller->regs[VI_V_START_REG] & 0x3FF;
 
-  renderArea->y.end /= 2;
-  renderArea->y.start /= 2;
+  hcoeff = (float)(controller->regs[VI_X_SCALE_REG] & 0xFFF) / (1 << 10);
+  vcoeff = (float)(controller->regs[VI_Y_SCALE_REG] & 0xFFF) / (1 << 10);
 
   /* Calculate the height and width. */
-  renderArea->height = ((controller->regs[VI_Y_SCALE_REG] & 0xFFF) *
-    (renderArea->y.end - renderArea->y.start)) / 0x400;
-
-  renderArea->width = ((controller->regs[VI_X_SCALE_REG] & 0xFFF) *
-    (renderArea->x.end - renderArea->x.start)) / 0x400;
-
-  /* Catch impossible conditions. */
-  renderArea->width = (renderArea->width > 640) ? 640 : renderArea->width;
-  renderArea->height = (renderArea->height > 480) ? 480 : renderArea->height;
+  renderArea->height =((renderArea->y.end - renderArea->y.start) >> 1) * vcoeff;
+  renderArea->width = ((renderArea->x.end - renderArea->x.start)) * hcoeff;
+  renderArea->hskip = controller->regs[VI_WIDTH_REG] - renderArea->width;
 }
 

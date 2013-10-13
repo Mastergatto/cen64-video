@@ -24,6 +24,7 @@ struct RenderArea {
 
   unsigned height;
   unsigned width;
+  int hskip;
 };
 
 struct VIFController;
